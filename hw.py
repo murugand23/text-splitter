@@ -29,6 +29,10 @@ load_dotenv()
 TOTAL_TOKENS_USED = 0
 COST_PER_MILLION_TOKENS = 0.15  # gpt-4o-mini pricing
 
+# Configuration constants
+MAX_REFINEMENT_ITERATIONS = 10  # Max attempts to adjust slide count via LLM
+TRUNCATE_CHARS = 500  # Context window for LLM: first 400 + last 100 chars
+
 
 def count_tokens(text: str) -> int:
     """Count tokens exactly using tiktoken (cl100k_base encoding)."""
@@ -97,7 +101,7 @@ def split_into_sentences(text: str) -> Tuple[List[str], List[int]]:
     return sentences, positions
 
 
-def truncate_smart(text: str, max_chars: int = 500) -> str:
+def truncate_smart(text: str, max_chars: int = TRUNCATE_CHARS) -> str:
     """Smart truncate: keep first 400 chars and last 100 chars."""
     if len(text) <= max_chars:
         return text
@@ -255,11 +259,10 @@ def iterative_refinement(paragraphs: List[str], initial_splits: List[int],
                         target_count: int, client) -> List[int]:
     """
     Iteratively refine splits to reach exact count using LLM-driven decisions.
-    Max 10 iterations to add/remove splits.
     """
     splits = list(initial_splits)
     
-    for iteration in range(10):
+    for iteration in range(MAX_REFINEMENT_ITERATIONS):
         diff = target_count - len(splits)
         
         if diff == 0:
