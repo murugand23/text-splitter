@@ -11,8 +11,6 @@ Splits markdown documents into N slides where each slide represents a discrete i
 4. Split document at the suggested character positions
 ```
 
-**Why LLM?** The assignment requires "discrete ideas" - a semantic concept that needs content understanding, not just mechanical splitting.
-
 ## Architecture
 
 ### Key Functions
