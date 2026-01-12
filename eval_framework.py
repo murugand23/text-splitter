@@ -150,9 +150,9 @@ def run_evaluation(test_files: List[Tuple[str, int]]):
 def main():
     """Run evaluation framework."""
     test_files = [
-        ('test.md', 10),
-        ('testing-1.md', 10),
-        ('kubernetes-readme.md', 5),
+        ('example.md', 10),
+        ('test1.md', 10),
+        ('kubernetes.md', 5),
     ]
     
     run_evaluation(test_files)
