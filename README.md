@@ -2,6 +2,25 @@
 
 Splits markdown documents into N slides where each slide represents a discrete idea.
 
+## Quick Start
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Set API key
+export OPENAI_API_KEY="your-key-here"
+
+# Run evaluation on test files
+python eval_framework.py
+```
+
+**Test your own files:** Edit `test_files` in `eval_framework.py` (line 152):
+
+```python
+test_files = [('your-file.md', 10)]  # (filename, target_slides)
+```
+
 ## Approach
 
 ```
@@ -13,29 +32,6 @@ Splits markdown documents into N slides where each slide represents a discrete i
 
 **Why LLM?** The assignment requires "discrete ideas" - a semantic concept that needs content understanding, not just mechanical splitting.
 
-## Installation
-
-```bash
-pip install openai tiktoken python-dotenv
-export OPENAI_API_KEY="your-key-here"
-```
-
-## Usage
-
-```python
-from hw import split_document
-
-with open('document.md', 'r') as f:
-    doc = f.read()
-
-slides, meta = split_document(doc, target_slides=10)
-
-# Verify content preservation
-assert ''.join(slides) == doc
-
-print(f"Cost: ${meta['cost']:.4f}, Tokens: {meta['tokens_used']:,}")
-```
-
 ## Architecture
 
 ### Key Functions
@@ -43,7 +39,7 @@ print(f"Cost: ${meta['cost']:.4f}, Tokens: {meta['tokens_used']:,}")
 **`count_tokens(text) -> int`**
 
 - Uses `tiktoken` with `cl100k_base` encoding for exact token counting
-- Required for accurate cost tracking and context window management
+- Required for accurate cost tracking and length calculations
 
 **`split_into_paragraphs(text) -> (paragraphs, positions)`**
 
@@ -61,14 +57,14 @@ print(f"Cost: ${meta['cost']:.4f}, Tokens: {meta['tokens_used']:,}")
 
 - Truncates long paragraphs for LLM context (first 400 + last 100 chars)
 - Balances cost vs context quality
-- Increased from 250 → 500 chars improved heading accuracy 76% → 87%
 
 **`llm_suggest_splits(text, target_slides) -> (positions, metadata)`**
 
-- Main LLM orchestration using `gpt-4o-mini` (16x cheaper than gpt-4o, ~$0.0009/doc)
-- Formats chunks as `[0] (~150 tokens) paragraph text...`
-- Prompt includes heading placement rules, semantic guidelines, chain-of-thought
-- Returns character positions where to split
+- Main LLM orchestration using `gpt-4o-mini`
+- Formats paragraphs as `[0] first 400 chars...last 100 chars` (truncated to 500 chars)
+- Prompt includes semantic guidelines
+- LLM returns paragraph numbers to split after (e.g., `[1, 3]` = split after paragraphs 1 and 3)
+- Converts paragraph numbers to character positions in original text
 
 **`llm_refine_add_split(paragraphs, section_start, section_end, client) -> Optional[int]`**
 
@@ -147,20 +143,13 @@ Based on latest eval run (3 documents, varying sizes):
 
 ## Evaluation
 
-Run the evaluation framework to test on multiple documents:
+The eval framework measures correctness, quality, cost, and speed across multiple test files.
 
 ```bash
 python eval_framework.py
 ```
 
-To test different files, edit `test_files` in `eval_framework.py` (lines 152-156):
-
-```python
-test_files = [
-    ('your-file.md', 10),  # (filename, target_slides)
-    ('another-file.md', 5),
-]
-```
+See metrics explanation below for what each measurement means.
 
 ### Metrics Measured
 
