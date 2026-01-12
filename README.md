@@ -2,25 +2,6 @@
 
 Splits markdown documents into N slides where each slide represents a discrete idea.
 
-## Quick Start
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Set API key
-export OPENAI_API_KEY="your-key-here"
-
-# Run evaluation on test files
-python eval_framework.py
-```
-
-**Test your own files:** Edit `test_files` in `eval_framework.py` (line 152):
-
-```python
-test_files = [('your-file.md', 10)]  # (filename, target_slides)
-```
-
 ## Approach
 
 ```
@@ -120,7 +101,6 @@ Based on latest eval run (3 documents, varying sizes):
 
 - Content preservation: ✅
 - Exact count: ✅
-- Heading accuracy: ~87%
 
 **Cost: ~$0.0009/doc**
 
@@ -172,6 +152,25 @@ See metrics explanation below for what each measurement means.
   - Current: 100% (better prompts = fewer retries = lower cost + faster speed)
 
 Outputs detailed results including slide content, metrics, and cost analysis.
+
+## Quick Start
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Set API key
+export OPENAI_API_KEY="your-key-here"
+
+# Run evaluation on test files
+python eval_framework.py
+```
+
+**Test your own files:** Edit `test_files` in `eval_framework.py` (line 152):
+
+```python
+test_files = [('your-file.md', 10)]  # (filename, target_slides)
+```
 
 ## Files
 
