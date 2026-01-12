@@ -38,10 +38,9 @@ def evaluate_approach(doc: str, target_slides: int, doc_name: str) -> dict:
         lines = [l.strip() for l in slide.strip().split('\n') if l.strip()]
         if not lines:
             continue
-        for line in lines:
-            if re.match(r'^#{1,6}\s+\w', line):
-                total_headings += 1
-        if lines and re.match(r'^#{1,6}\s+\w', lines[-1]):
+        headings = [i for i, l in enumerate(lines) if l.startswith('#')]
+        total_headings += len(headings)
+        if headings and headings[-1] == len(lines) - 1:
             orphaned += 1
     
     heading_accuracy = ((total_headings - orphaned) / total_headings * 100) if total_headings > 0 else 100
@@ -152,7 +151,7 @@ def run_evaluation(test_files: List[Tuple[str, int]]):
                 f.write(f"\n{'='*80}\n")
                 f.write(f"{r['doc_name']} → {r['target']} slides\n")
                 f.write(f"{'='*80}\n")
-                f.write(f"Heading accuracy: {r['heading_accuracy']:.1f}% | Distribution: {r['distribution']:.2f}x | Cost: ${r['cost']:.4f}\n")
+                f.write(f"Distribution: {r['distribution']:.2f}x | Cost: ${r['cost']:.4f}\n")
                 f.write(f"{'='*80}\n\n")
                 
                 for i, slide in enumerate(r['slides'], 1):

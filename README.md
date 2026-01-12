@@ -135,12 +135,6 @@ Based on latest eval run (3 documents, varying sizes):
 - Distribution: 1.97x max/avg (semantic grouping, not forced uniformity)
 - First-attempt success: 100% (recent tests)
 
-## Limitations
-
-- **Uneven distribution (2x):** By design - prioritizes discrete ideas over uniform sizes
-- **Heading accuracy (87%):** ~1 in 8 headings orphaned, trade-off for simplicity
-- **Edge cases:** May fail if document too short for target slides
-
 ## Evaluation
 
 The eval framework measures correctness, quality, cost, and speed across multiple test files.
@@ -181,6 +175,6 @@ Outputs detailed results including slide content, metrics, and cost analysis.
 
 ## Files
 
-- `hw.py` (488 lines) - Main implementation
-- `eval_framework.py` (163 lines) - Evaluation framework
+- `hw.py` - Main implementation
+- `eval_framework.py` - Evaluation framework
 - `README.md` - This file
