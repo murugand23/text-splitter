@@ -140,7 +140,29 @@ def run_evaluation(test_files: List[Tuple[str, int]]):
             print(f"  Cost: ${r['cost']:.4f}")
             print(f"  Time: {r['time']:.2f}s")
             print(f"  Attempts: {r['attempts']}")
-            print(f"  Token distribution: min={min(r['token_counts'])}, max={max(r['token_counts'])}, avg={statistics.mean(r['token_counts']):.0f}")
+        
+        # Save slide content to file
+        output_file = "EVAL_SLIDE_CONTENT.txt"
+        with open(output_file, 'w') as f:
+            f.write("="*80 + "\n")
+            f.write("EVALUATION SLIDE CONTENT\n")
+            f.write("="*80 + "\n\n")
+            
+            for r in passing:
+                f.write(f"\n{'='*80}\n")
+                f.write(f"{r['doc_name']} → {r['target']} slides\n")
+                f.write(f"{'='*80}\n")
+                f.write(f"Heading accuracy: {r['heading_accuracy']:.1f}% | Distribution: {r['distribution']:.2f}x | Cost: ${r['cost']:.4f}\n")
+                f.write(f"{'='*80}\n\n")
+                
+                for i, slide in enumerate(r['slides'], 1):
+                    f.write(f"{'~'*80}\n")
+                    f.write(f"SLIDE {i}/{len(r['slides'])} ({r['token_counts'][i-1]} tokens)\n")
+                    f.write(f"{'~'*80}\n")
+                    f.write(slide)
+                    f.write(f"\n{'~'*80}\n\n")
+        
+        print(f"\n📄 Slide content saved to: {output_file}")
     
     print(f"\n{'='*80}")
     print("✅ Evaluation complete!")
